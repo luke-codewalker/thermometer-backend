@@ -24,6 +24,9 @@ app.get("/logs", async (req,res) => {
 })
 
 app.post("/logs", async (req,res) => {
+    const { body: data} = req;
+    console.log("Received", data);
+    
     res.send("OK");
 })
 
