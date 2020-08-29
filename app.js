@@ -15,7 +15,8 @@ app.use((req, res, next) => {
 
 app.get("/logs", async (req,res) => {
     try {
-        const logs = await pool.query('SELECT * FROM logs');
+        const result = await pool.query('SELECT * FROM logs');
+        const logs = result.rows;
         res.json({ logs });
     } catch (error) {
         res.status(500).json({ error: true });
