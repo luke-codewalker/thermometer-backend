@@ -14,8 +14,12 @@ app.use((req, res, next) => {
 })
 
 app.get("/logs", async (req,res) => {
-    const logs = await pool.query('SELECT * FROM logs');
-    res.json({ logs });
+    try {
+        const logs = await pool.query('SELECT * FROM logs');
+        res.json({ logs });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
 })
 
 app.post("/logs", async (req,res) => {
