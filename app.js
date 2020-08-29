@@ -25,7 +25,13 @@ app.get("/logs", async (req,res) => {
 
 app.post("/logs", async (req,res) => {
     console.log("Received", req.body);
+    const {temperature} = req.body;
+    if(!temperature) {
+        res.status(403).send({error: true, message:"temperature field is required"});
+    }
 
+    const result = await pool.query('INSERT INTO logs(temperature) VALUES($1) RETURNING *', [temperature]);
+    console.log(result);
     res.send("OK");
 })
 
