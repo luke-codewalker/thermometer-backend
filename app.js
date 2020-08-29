@@ -14,8 +14,8 @@ app.use((req, res, next) => {
 })
 
 app.get("/logs", async (req,res) => {
-    const res = await pool.query('SELECT * FROM logs');
-    res.json({ logs: res});
+    const logs = await pool.query('SELECT * FROM logs');
+    res.json({ logs });
 })
 
 app.post("/logs", async (req,res) => {
