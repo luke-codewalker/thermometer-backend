@@ -1,6 +1,7 @@
 const express = require("express");
 const helmet = require("helmet");
 const bodyParser = require("body-parser");
+const cors = require('cors');
 const { Pool } = require('pg')
 
 const app = express();
@@ -19,6 +20,7 @@ const protectedRoute = (req, res, next) => {
 }
 
 app.use(helmet());
+app.use(cors());
 app.use(bodyParser.json())
 app.use((req, res, next) => {
     console.log(new Date(), req.method, req.url);
