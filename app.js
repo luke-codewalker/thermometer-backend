@@ -13,7 +13,8 @@ const protectedRoute = (req, res, next) => {
     const token = req.get('X-Token');
     if(!token || token !== process.env.API_TOKEN) {
         res.status(401).json({ error: true, message: 'Valid api token missing'});
-    }
+        return;
+    } 
     next();
 }
 
