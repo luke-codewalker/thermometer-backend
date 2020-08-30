@@ -35,6 +35,16 @@ app.get("/logs", async (req,res) => {
     }
 })
 
+app.get("/logs/latest", async (req,res) => {
+    try {
+        const result = await pool.query('SELECT * FROM logs ORDER BY loggedat DESC LIMIT 1');
+        const logs = result.rows;
+        res.json({ logs });
+    } catch (error) {
+        res.status(500).json({ error: true });
+    }
+})
+
 app.post("/logs", protectedRoute, async (req,res) => {
     const {temperature} = req.body;
     if(!temperature) {
