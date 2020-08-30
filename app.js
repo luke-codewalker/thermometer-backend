@@ -1,12 +1,23 @@
 const express = require("express");
+const helmet = require("helmet");
 const bodyParser = require("body-parser");
-const app = express();
 const { Pool } = require('pg')
+
+const app = express();
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
 const PORT = process.env.PORT || 5000;
 
+const protectedRoute = (req, res, next) => {
+    const token = req.get('X-Token');
+    if(!token || token !== process.env.API_TOKEN) {
+        res.status(401).json({ error: true, message: 'Valid api token missing'});
+    }
+    next();
+}
+
+app.use(helmet());
 app.use(bodyParser.json())
 app.use((req, res, next) => {
     console.log(new Date(), req.method, req.url);
@@ -23,10 +34,10 @@ app.get("/logs", async (req,res) => {
     }
 })
 
-app.post("/logs", async (req,res) => {
+app.post("/logs", protectedRoute, async (req,res) => {
     const {temperature} = req.body;
     if(!temperature) {
-        res.status(403).send({error: true, message:"temperature field is required"});
+        res.status(400).send({error: true, message:"temperature field is required"});
     }
 
     try {
@@ -34,6 +45,13 @@ app.post("/logs", async (req,res) => {
         res.json({});
     } catch (error) {
         res.status(500).json({ error: true });
+    }
+})
+
+const requiredKeys = ['DATABASE_URL', 'API_TOKEN'];
+requiredKeys.forEach(key => {
+    if(!process.env[key]) {
+        throw `${key} not provided in environment variables. Aborting...`
     }
 })
 
