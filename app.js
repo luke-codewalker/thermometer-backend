@@ -68,8 +68,8 @@ app.post("/logs", protectedRoute, requiredBodyFields("temperature", "humidity", 
 
     try {
         console.log(temperature, humidity, pressure, light)
-        console.log('INSERT INTO logs(temperature, logTime, humidity, pressure, light) VALUES($1, $2, $2, $3, $4, $5) RETURNING *')
-        await pool.query('INSERT INTO logs(temperature, logTime, humidity, pressure, light) VALUES($1, $2, $2, $3, $4, $5) RETURNING *', [temperature, new Date(), humidity, pressure, light]);
+        console.log('INSERT INTO logs(temperature, logTime, humidity, pressure, light) VALUES($1, $2, $3, $4, $5) RETURNING *')
+        await pool.query('INSERT INTO logs(logTime, temperature, humidity, pressure, light) VALUES($1, $2, $3, $4, $5) RETURNING *', [new Date(), temperature, humidity, pressure, light]);
         res.json({});
     } catch (error) {
         console.log(error)
