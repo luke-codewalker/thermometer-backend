@@ -20,15 +20,19 @@ const protectedRoute = (req, res, next) => {
 }
 
 const requiredBodyFields = (...keys) => (req, res, next) => {
+    const errors = [];
     keys.forEach(key => {
         if(typeof req.body[key] === "undefined") {
             console.log(`${key} field in body is required but was missing`);
-
-            res.status(400).send({error: true, message: `${key} field in body is required but was missing`});
-            return;
+            errors.push(`${key} field in body is required but was missing`)
         }
     })
-    next();
+
+    if(errors.length > 0) {
+        res.status(400).send({error: true, messages: errors});
+    } else {
+        next();
+    }
 }
 
 app.use(helmet());
