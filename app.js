@@ -61,6 +61,7 @@ app.post("/logs", protectedRoute, requiredBodyFields("temperature", "humidity", 
     const {temperature, humidity, pressure, light} = req.body;
 
     try {
+        console.log(temperature, humidity, pressure, light)
         await pool.query('INSERT INTO logs(temperature, logTime, humidity, pressure, light) VALUES($1, $2, $2, $3, $4, $5) RETURNING *', [temperature, new Date(), humidity, pressure, light]);
         res.json({});
     } catch (error) {
