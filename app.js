@@ -49,7 +49,7 @@ app.get("/logs", async (req,res) => {
 
 app.get("/logs/latest", async (req,res) => {
     try {
-        const result = await pool.query('SELECT * FROM logs ORDER BY loggedat DESC LIMIT 1');
+        const result = await pool.query('SELECT * FROM logs ORDER BY logtime DESC LIMIT 1');
         const logs = result.rows;
         res.json({ logs });
     } catch (error) {
