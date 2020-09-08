@@ -23,7 +23,6 @@ const requiredBodyFields = (...keys) => (req, res, next) => {
     const errors = [];
     keys.forEach(key => {
         if(typeof req.body[key] === "undefined") {
-            console.log(`${key} field in body is required but was missing`);
             errors.push(`${key} field in body is required but was missing`)
         }
     })
@@ -67,8 +66,6 @@ app.post("/logs", protectedRoute, requiredBodyFields("temperature", "humidity", 
     const {temperature, humidity, pressure, light} = req.body;
 
     try {
-        console.log(temperature, humidity, pressure, light)
-        console.log('INSERT INTO logs(temperature, logTime, humidity, pressure, light) VALUES($1, $2, $3, $4, $5) RETURNING *')
         await pool.query('INSERT INTO logs(logTime, temperature, humidity, pressure, light) VALUES($1, $2, $3, $4, $5) RETURNING *', [new Date(), temperature, humidity, pressure, light]);
         res.json({});
     } catch (error) {
