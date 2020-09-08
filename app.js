@@ -19,6 +19,16 @@ const protectedRoute = (req, res, next) => {
     next();
 }
 
+const requiredBodyFields = (...keys) => (req, res, next) => {
+    keys.forEach(key => {
+        if(typeof req.body[key] === "undefined") {
+            res.status(400).send({error: true, message: `${key} field in body is required but was missing`});
+            return;
+        }
+    })
+    next();
+}
+
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json())
@@ -47,14 +57,11 @@ app.get("/logs/latest", async (req,res) => {
     }
 })
 
-app.post("/logs", protectedRoute, async (req,res) => {
-    const {temperature} = req.body;
-    if(!temperature) {
-        res.status(400).send({error: true, message:"temperature field is required"});
-    }
+app.post("/logs", protectedRoute, requiredBodyFields("temperature", "humidity", "pressure", "light"), async (req,res) => {
+    const {temperature, humidity, pressure, light} = req.body;
 
     try {
-        await pool.query('INSERT INTO logs(temperature, loggedAt) VALUES($1, $2) RETURNING *', [temperature, new Date()]);
+        await pool.query('INSERT INTO logs(temperature, logTime, humidity, pressure, light) VALUES($1, $2, $2, $3, $4, $5) RETURNING *', [temperature, new Date(), humidity, pressure, light]);
         res.json({});
     } catch (error) {
         res.status(500).json({ error: true });
